@@ -47,6 +47,13 @@
       width: 122px;
     }
   </style>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "83e5bff9cafb4f0799d3df7f5a8aaae2"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
 </head>
 
 <body>
@@ -69,25 +76,35 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id = "consoleLog">Console Log</button>
+      <button id = "consoleError">Console Error</button>
+      <button id = "consoleCount">Console Count</button>
+      <button id = "consoleWarn">Console Warn</button>
+      <button id = "consoleAssert">Console Assert</button>
+      <button id = "consoleClear">Console Clear</button>
+      <button id = "consoleDir">Console Dir</button>
+      <button id = "consoleDirxml">Console dirxml</button>
+      <button id = "consoleGroupStart">Console Group Start</button>
+      <button id = "consoleGroupEnd">Console Group End</button>
+      <button id = "consoleTable">Console Table</button>
+      <button id = "startTimer">Start Timer</button>
+      <button id = "endTimer">End Timer</button>
+      <button id = "consoleTrace">Console Trace</button>
+      <button id = "globalError">Trigger a Global Error</button>
     </section>
   </main>
-
   <script>
+    window.addEventListener('error', ()=>{
+      console.log('Sadly an error happened my friend');
+    })
+    class SyntaxError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "SyntaxError";
+      }
+    }
+    TrackJS.track('Testing TrackJS!');
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +112,127 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try{
+        if(isNaN(firstNum) || isNaN(secondNum)){
+          throw new SyntaxError;
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }catch(err){
+          throw err;
+      }finally{
+        if(isNaN(firstNum) || isNaN(secondNum)){
+          output.innerHTML = 'Invalid input';
+        }
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    const consoleLog = document.getElementById('consoleLog');
+    consoleLog.addEventListener('click', ()=>{
+      console.log('Console Log Demo');
+    })
+
+    const consoleError = document.getElementById('consoleError');
+    consoleError.addEventListener('click', ()=>{
+      console.error('Console Error Demo');
+    })
+
+    const consoleCount = document.getElementById('consoleCount');
+    consoleCount.addEventListener('click',()=>{
+      console.count('button');
+    })
+
+    const consoleWarn = document.getElementById('consoleWarn');
+    consoleWarn.addEventListener('click', ()=>{
+      console.warn('Console Warn Button');
+    })
+
+    const consoleAssert = document.getElementById('consoleAssert');
+    consoleAssert.addEventListener('click',()=>{
+      const number = 2;
+      const errorMsg =  'The number does not equal 3'
+      console.assert(number == 3, {number, errorMsg});
+    })
+
+    const consoleClear = document.getElementById('consoleClear');
+    consoleClear.addEventListener('click', ()=>{
+      console.clear();
+    })
+
+    const consoleDir = document.getElementById('consoleDir');
+    consoleDir.addEventListener('click', ()=>{
+      console.dir(consoleDir);
+    })
+
+    const consoleDirxml = document.getElementById('consoleDirxml');
+    consoleDirxml.addEventListener('click', ()=>{
+      console.dirxml(consoleDirxml);
+    })
+    
+    const consoleGroupStart = document.getElementById('consoleGroupStart');
+    consoleGroupStart.addEventListener('click', ()=>{
+      console.group('console.group');
+    })
+
+    const consoleGroupEnd = document.getElementById('consoleGroupEnd');
+    consoleGroupEnd.addEventListener('click', ()=>{
+      console.groupEnd();
+    })
+
+    const consoleTable = document.getElementById('consoleTable');
+    consoleTable.addEventListener('click', ()=>{
+      var classes = [
+        {
+          name: 'Software Engineering',
+          num: 110,
+        },
+        {
+          name: 'Progrmng Lang:Princpl&Paradigm',
+          num: 130,
+        },
+        {
+          name: 'Advanced Software Engineering',
+          num: 112,
+        }
+      ];
+      console.table(classes);
+    })
+
+    const startTimer = document.getElementById('startTimer');
+    startTimer.addEventListener('click', ()=>{
+      console.time('Timer Button');
+    })
+
+    const endTimer = document.getElementById('endTimer');
+    endTimer.addEventListener('click', ()=>{
+      console.timeEnd('Timer Button');
+    })
+
+    const consoleTrace = document.getElementById('consoleTrace');
+    consoleTrace.addEventListener('click', ()=>{
+      const handleBtnClick = ()=>{
+        deep();
+      }
+      const deep = ()=>{
+        deeper();
+      }
+      const deeper = ()=>{
+        deepest();
+      }
+      const deepest = ()=>{
+        console.trace();
+      }
+      handleBtnClick();
+    })
+
+    const globalError = document.getElementById('globalError');
+    globalError.addEventListener('click', ()=>{
+      boom();
+    })
+    
   </script>
 </body>
 
